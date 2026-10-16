@@ -20799,7 +20799,7 @@ html.still .in { opacity: 1 !important; transform: none !important; }
                                      }
                                  ],
                        "notes":  {
-                                     "talk":  "The platform follows Domain-Driven Design: each part is a bounded context with its own aggregates and domain events. Requests are split the CQRS way. Commands go through the domain model and write to the part\u0027s PostgreSQL database; queries go through separate handlers and a read-only connection to a read replica, which eight parts already use. The replica is kept in step by the database platform, not by application code. Across parts, Search builds its own read store in Elasticsearch and Redis from catalog events. Ordering and Catalog apply the full pattern; Customers only partly, which is why it is next in the backlog.",
+                                     "talk":  "The platform follows Domain-Driven Design: each part is a bounded context with its own aggregates and domain events. Requests are split the CQRS way. Commands go through the domain model and write to the part\u0027s PostgreSQL database; queries go through separate handlers and a read-only connection to a read replica, which eight parts already use. The replica is kept in step by the database platform, not by application code. Across parts, Search builds its own read store in Elasticsearch and Redis from catalog events. Ordering and Catalog apply the full pattern; Customers only partly.",
                                      "keyPoint":  "Domain-driven parts, with commands and queries separated down to the database.",
                                      "question":  "How fresh is the data that queries read?",
                                      "answer":  "Queries in the eight split parts read a PostgreSQL read replica, so they can trail the write database by the replication delay. The code does not measure that delay; [[REPLICA LAG]] should come from the database monitoring. Search is updated by events and its resync jobs."
@@ -20968,46 +20968,10 @@ html.still .in { opacity: 1 !important; transform: none !important; }
                        "title":  "One stack, different ages",
                        "subtitle":  "C#, .NET, PostgreSQL and one messaging library everywhere. Versions span .NET {{dotnetRange}}.",
                        "notes":  {
-                                     "talk":  "The technology choices are consistent, which lowers the cost of ownership. Every part is written in C# on Microsoft .NET, every part uses PostgreSQL, and every part uses the same messaging library on Amazon\u0027s queues. Engineers can move between parts easily. The variation is in age: the newest parts run the current .NET version, while Identity is still on .NET 5 with an older messaging library, and company sign-in is on .NET 7. Those are no longer supported by Microsoft, and the identity upgrade is in the planned backlog. Notifications runs .NET 10 but still uses the older messaging library.",
+                                     "talk":  "The technology choices are consistent, which lowers the cost of ownership. Every part is written in C# on Microsoft .NET, every part uses PostgreSQL, and every part uses the same messaging library on Amazon\u0027s queues. Engineers can move between parts easily. The variation is in age: the newest parts run the current .NET version, while Identity is still on .NET 5 with an older messaging library, and company sign-in is on .NET 7. Those are no longer supported by Microsoft. Notifications runs .NET 10 but still uses the older messaging library.",
                                      "keyPoint":  "A single, mainstream stack; upgrades for the older parts are scoped.",
                                      "question":  "Is there vendor lock-in?",
                                      "answer":  "The platform is built for AWS: SNS/SQS, S3 and ECS. The application code is portable .NET; the messaging library supports other brokers, but moving would be a project."
-                                 },
-                       "claims":  [
-
-                                  ]
-                   },
-                   {
-                       "id":  "roadmap",
-                       "section":  "What it can become",
-                       "scene":  "roadmap",
-                       "eyebrow":  "Roadmap",
-                       "title":  "Planned backlog",
-                       "items":  [
-                                     {
-                                         "title":  "Identity change \u0026 refactor",
-                                         "benefit":  "Sign-in moves onto supported, patched software that is easier to change."
-                                     },
-                                     {
-                                         "title":  "Move messaging from Amazon SQS to RabbitMQ",
-                                         "benefit":  "One messaging setup and one library version across every part."
-                                     },
-                                     {
-                                         "title":  "Customer service refactor",
-                                         "detail":  "separate commands and queries, following the same approach already used in the Ordering service",
-                                         "benefit":  "Customer features become as testable and safe to change as Ordering."
-                                     },
-                                     {
-                                         "title":  "Payment refactor",
-                                         "detail":  "remove unnecessary code",
-                                         "benefit":  "A smaller payments codebase: faster, safer changes where money moves."
-                                     }
-                                 ],
-                       "notes":  {
-                                     "talk":  "Our plan is one backlog of four items. First, change and refactor the identity service, which today runs on an unsupported .NET version and sign-in framework. Second, move messaging from Amazon SQS to RabbitMQ, which also brings every part onto one version of the messaging library. Third, refactor the Customer service the way Ordering already works: every request is a command or a query with its own handler, commands save through one unit of work, and queries read from the read-only database. Fourth, remove unused code from Payments.",
-                                     "keyPoint":  "Four concrete items, each tied to a specific finding in the code.",
-                                     "question":  "What will these items cost, and how long will they take?",
-                                     "answer":  "[[BACKLOG EFFORT]] Each item is scoped from findings in the code, so the owner\u0027s team can size it precisely. All four keep the overall architecture; the messaging move changes the broker underneath, not how the parts talk to each other."
                                  },
                        "claims":  [
 
